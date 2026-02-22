@@ -7,50 +7,114 @@
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.4/dist/mindar-image-aframe.prod.js"></script>
 
-  <style>
-    body { margin: 0; overflow: hidden; }
-  </style>
+  <style> body { margin: 0; overflow: hidden; } </style>
 </head>
-
 <body>
   <a-scene
     mindar-image="imageTargetSrc: targets.mind;"
     vr-mode-ui="enabled: false"
     device-orientation-permission-ui="enabled: true"
+    renderer="colorManagement: true; physicallyCorrectLights: true"
   >
+    <!-- Assets -->
     <a-assets>
-      <a-asset-item id="afficheModel" src="affiche.glb"></a-asset-item>
+      <a-asset-item id="afficheModel" src="affiche.glb" crossorigin="anonymous"></a-asset-item>
     </a-assets>
 
+    <!-- Caméra -->
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-    <!-- Lumière ambiante -->
-<a-light type="ambient" intensity="1.2"></a-light>
 
-<!-- Lumière directionnelle -->
-<a-light type="directional" position="1 2 1" intensity="1.5"></a-light>
+    <!-- Lumières (ajuste les intensités si nécessaire) -->
+    <a-light type="ambient" intensity="1.0"></a-light>
+    <a-light type="directional" position="1 2 1" intensity="1.2"></a-light>
 
+    <!-- TARGET (index 0) -->
+    <a-entity mindar-image-target="targetIndex: 0" id="targetAffiche">
 
-  <!-- Parent = rotation lente continue -->
-  <a-entity mindar-image-target="targetIndex: 0" id="target">
+      <!-- Parent (pas de rotation continue) ; sert de pivot et d'orientation -->
+      <a-entity id="afficheParent" position="0 0 0">
 
-  
+        <!-- Modèle 3D : visible false par défaut, animé au trigger -->
+        <a-entity
+          id="affiche"
+          gltf-model="#afficheModel"
+          visible="false"
+          position="0 0 -0.8"    <!-- start: sous la feuille (axe Z en profondeur) -->
+          scale="0.6 0.6 0.6"     <!-- start scale : léger small, sera "pop" -->
+          rotation="0 0 0"
 
-  </a-entity>
+          /* animation d'entrée : montée */
+          animation__move="property: position;
+                           from: 0 0 -0.8;
+                           to: 0 0 0;
+                           dur: 900;
+                           easing: easeOutBack;
+                           startEvents: start-animation;"
 
-</a-entity>
+          /* animation d'entrée : pop (scale up) puis settle */
+          animation__pop="property: scale;
+                          from: 0.6 0.6 0.6;
+                          to: 1.08 1.08 1.08;
+                          dur: 600;
+                          easing: easeOutBack;
+                          startEvents: start-animation;"
 
+          animation__settle="property: scale;
+                             from: 1.08 1.08 1.08;
+                             to: 1 1 1;
+                             dur: 300;
+                             delay: 600;
+                             easing: easeOutSine;
+                             startEvents: start-animation;"
 
+          /* subtle floating after entry (delayed so it begins after entry) */
+          animation__float="property: position;
+                            from: 0 0 0;
+                            to: 0 0 0.04;
+                            dur: 3000;
+                            delay: 1000;
+                            dir: alternate;
+                            loop: true;
+                            easing: easeInOutSine;
+                            startEvents: start-animation;">
+        </a-entity>
 
-<script>
-  const target = document.querySelector("#target");
+      </a-entity>
 
-  target.addEventListener("targetFound", () => {
-    document.querySelector("#affiche").emit("start-animation");
-    document.querySelector("#parent").emit("start-rotate");
-  });
-</script>
-
-
+    </a-entity>
   </a-scene>
+
+  <!-- Script pour déclencher l'animation et pour réinitialiser à la perte de cible -->
+  <script>
+    const target = document.querySelector('#targetAffiche');
+    const model = document.querySelector('#affiche');
+    const initial = {
+      position: { x: 0, y: 0, z: -0.8 },
+      scale: { x: 0.6, y: 0.6, z: 0.6 }
+    };
+
+    // helper: reset attributes (useful when targetLost)
+    function resetModel() {
+      model.setAttribute('position', `${initial.position.x} ${initial.position.y} ${initial.position.z}`);
+      model.setAttribute('scale', `${initial.scale.x} ${initial.scale.y} ${initial.scale.z}`);
+      model.setAttribute('visible', 'false');
+    }
+
+    // quand la cible est détectée : afficher + lancer l'entrée
+    target.addEventListener('targetFound', () => {
+      model.setAttribute('visible', 'true');
+      // déclenche toutes les animations qui ont startEvents: start-animation
+      model.emit('start-animation');
+    });
+
+    // quand la cible est perdue : cacher et reset pour que la prochaine détection reparte de zéro
+    target.addEventListener('targetLost', () => {
+      // stop any floating loop by hiding and resetting attributes
+      resetModel();
+    });
+
+    // assure l'état initial au chargement
+    resetModel();
+  </script>
 </body>
 </html>
