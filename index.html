@@ -41,23 +41,16 @@
   id="affiche"
   gltf-model="#afficheModel"
   position="0 0 0"
-  scale="0.6 0.6 0.6"
-  material="opacity: 0; transparent: true"
+  rotation="0 -90 0"
+  scale="1 1 1"
   visible="false"
 
-  animation__scale="property: scale;
-                    from: 0.6 0.6 0.6;
-                    to: 1 1 1;
-                    dur: 900;
-                    easing: easeOutBack;
-                    startEvents: start-animation"
-
-  animation__fade="property: material.opacity;
-                   from: 0;
-                   to: 1;
-                   dur: 800;
-                   easing: easeOutQuad;
-                   startEvents: start-animation">
+  animation__rotate="property: rotation;
+                     from: 0 -90 0;
+                     to: 0 0 0;
+                     dur: 1000;
+                     easing: easeOutCubic;
+                     startEvents: start-animation">
 </a-entity>
 
     </a-entity>
