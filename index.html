@@ -40,35 +40,25 @@
 <a-entity
   id="affiche"
   gltf-model="#afficheModel"
+  position="0 0 0"
+  scale="0.6 0.6 0.6"
+  material="opacity: 0; transparent: true"
   visible="false"
-  position="0 0 -0.8"
-  scale="0.1 0.1 0.1"
-  rotation="0 0 0"
 
-  animation__move="property: position;
-                   from: 0 0 -0.8;
-                   to: 0 0 0;
-                   dur: 900;
-                   easing: easeOutBack;
-                   startEvents: start-animation;"
+  animation__scale="property: scale;
+                    from: 0.6 0.6 0.6;
+                    to: 1 1 1;
+                    dur: 900;
+                    easing: easeOutBack;
+                    startEvents: start-animation"
 
-  animation__pop="property: scale;
-                  from: 0.1 0.1 0.1;
-                  to: 0.8 0.8 0.8;
-                  dur: 600;
-                  easing: easeOutBack;
-                  startEvents: start-animation;"
-
-  animation__settle="property: scale;
-                     from: 1.08 1.08 1.08;
-                     to: 8.5 8.5 8.5;
-                     dur: 300;
-                     delay: 600;
-                     easing: easeOutSine;
-                     startEvents: start-animation;">
+  animation__fade="property: material.opacity;
+                   from: 0;
+                   to: 1;
+                   dur: 800;
+                   easing: easeOutQuad;
+                   startEvents: start-animation">
 </a-entity>
-
-      </a-entity>
 
     </a-entity>
   </a-scene>
