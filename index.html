@@ -16,6 +16,7 @@
     device-orientation-permission-ui="enabled: true"
     renderer="colorManagement: true; physicallyCorrectLights: true"
   renderer="logarithmicDepthBuffer: true;"
+  shadow="type: pcfsoft"
 >
   >
     <!-- Assets -->
@@ -28,7 +29,9 @@
 
     <!-- Lumières (ajuste les intensités si nécessaire) -->
     <a-light type="ambient" intensity="2.5"></a-light>
-    <a-light type="directional" position="1 2 1" intensity="1.2"></a-light>
+    <a-light type="directional" position="1 2 1" intensity="1.2"castShadow="true"
+  shadowMapHeight="1024"
+  shadowMapWidth="1024"></a-light>
 
     <!-- TARGET (index 0) -->
     <a-entity mindar-image-target="targetIndex: 0" id="targetAffiche">
@@ -43,23 +46,25 @@
   position="0 0 0"
   scale="0.7 0.7 0.7"
   visible="false"
+  shadow="cast: true; receive: false"
 
   material="transparent: true; opacity: 0"
 
-  animation__scale="property: scale;
-                    from: 0.7 0.7 0.7;
-                    to: 1 1 1;
-                    dur: 1000;
-                    easing: easeOutCubic;
-                    startEvents: start-animation"
+  animation__move="property: position;
+                   from: 0 0 -0.5;
+                   to: 0 0 0;
+                   dur: 600;
+                   easing: easeOutCubic;
+                   startEvents: start-animation"
 
-  animation__fade="property: material.opacity;
-                   from: 0;
-                   to: 1;
-                   dur: 900;
-                   easing: easeOutQuad;
-                   startEvents: start-animation">
+  animation__scale="property: scale;
+                    from: 0.3 0.3 0.3;
+                    to: 1 1 1;
+                    dur: 800;
+                    easing: easeOutElastic;
+                    startEvents: start-animation">
 </a-entity>
+
 
     </a-entity>
   </a-scene>
